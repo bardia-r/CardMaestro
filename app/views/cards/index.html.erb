@@ -1,0 +1,168 @@
+<%= stylesheet_link_tag "user_profile" %>
+<div class="container-fliud custom-bg border-bottom border-dark py-4 text-secondary parallax">
+
+  <div class="row text-center">
+    <div class="col-12">
+      <h2><b>Don't see a card that you own?</b></h2>
+      <%= link_to 'Create A New Card', new_card_path, class:"btn btn-primary" %>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+
+  <% if flash[:request] %>
+    <h2><%= flash[:request] %></h2>
+  <% end %>
+  <div class="row">
+    <div class="col-12 border rounded bg-white shadow p-4">
+      
+      <h1><b class="border-bottom border-top border-dark">CARD LIBRARY.</b></h1>
+      <hr>
+      <div class="row my-2">
+      	<hr>
+      	<div class="col-2 text-left">
+			<button class="btn btn-outline-secondary" id="switch-to-image-view"><i class="fa fa-border-all"></i></button>
+			<button class="btn btn-outline-secondary" id="switch-to-table-view" disabled><i class="fa fa-list"></i></button>
+		</div>
+        <div class="col-10 text-right">
+          <%= form_tag(cards_path, method: :get) do %>
+		  
+		  Collection:
+		  <select name='collection_filter' onchange="this.form.submit()" style="margin-right: 15px;">
+		  
+			<%if params[:collection_filter] != ""%>
+				<option value=""></option>
+			<%else%>
+				<option value="" selected>Pick a Collection</option>
+			<%end%>
+			
+			<% Card.all.select{|card| card.approved}.collect{|card| card.collection}.uniq.each do |collection| %>
+			
+			  <%if params[:collection_filter] == collection%>
+				<option value="<%= collection %>" selected><%= collection %></option>
+			  <%else%>
+				<option value="<%= collection %>"><%= collection %></option>
+			  <%end%>
+			  
+			<% end %>
+			
+		  </select>
+		  
+		  <%if params[:collection_filter] and params[:collection_filter] != ""%>
+			  Set:
+			  <select name='set_filter' onchange="this.form.submit()" style="margin-right: 15px;">
+			  
+				<%if params[:set_filter] == "" or Card.set_in_collection(params[:collection_filter], params[:set_filter])%>
+					<option value="" selected>Pick a Set</option>
+				<%else%>
+					<option value=""></option>
+				<%end%>
+				
+				<% Card.get_sets_in_collection(params[:collection_filter]).each do |set| %>
+				
+				  <%if params[:set_filter] == set%>
+					<option value="<%= set %>" selected><%= set %></option>
+				  <%else%>
+					<option value="<%= set %>"><%= set %></option>
+				  <%end%>
+				  
+				<% end %>
+				
+			  </select>
+		  <%end%>
+		  
+          <%= text_field_tag(:search, params[:search]) %>
+          <%= submit_tag ("Search"), class:"btn btn-outline-primary", id:"search-btn" %>
+          <% end %>
+        </div>
+      </div>
+      <!-- Image view -->
+      <div class="row image-view" style="display:none;">
+      	<div class="col">          
+      		<div class="personal-collections">
+	            <% @cards.select{ |card| card.approved }.each do |card| %>
+	              <div class="card-container">
+					<% if card.image.attached? %>
+						<%= image_tag card.image, :alt => card.title, width: 244, height: 361, class: "card_pic rounded" %>
+					<% else %>
+						<%= image_tag card.imageurl, :alt => card.title, width: 244, height: 361, class: "card_pic rounded" %>
+					<% end %>
+	                <div class="card-body text-center">
+	                  <p><strong><%= card.title %></strong><br><%= card.set %></p>
+                    <div class="customized-btn-group">
+                      <%= link_to 'View details', card_path(card), class:"btn btn-primary", id:"view-btn" %>
+                    </div>
+	                </div>
+	              </div>
+	            <% end %>
+	        </div>
+	    </div>
+      </div>
+
+      <div class="row table-view">
+        <div class="col">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Collection</th>
+                <th>Set</th>
+                <% if current_user and current_user.admin %>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @cards.select{ |card| card.approved }.each do |card| %>
+                <tr>
+                  <% if card.image.attached? %>
+                    <td><a class="card-title" data-toggle="tooltip" title='<%=image_tag card.image, width:127, height:180%>' target="_blank" href=<%=card_path(card)%>><%= card.title %></a></td>
+                  <% else %>
+                    <td><a class="card-title" data-toggle="tooltip" title='<%=image_tag card.imageurl, width:127, height:180%>' target="_blank" href=<%=card_path(card)%>><%= card.title %></a></td>
+                  <% end %>
+                  <td><%= card.collection %></td>
+                  <td><%= card.set %></td>
+                  <% if current_user and current_user.admin %>
+                    <td><%= link_to '<i class="fa fa-edit"></i>'.html_safe, edit_card_path(card) %></td>
+                    <td><%= link_to '<i class="fa fa-trash"></i>'.html_safe, card_path(card), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip({
+	    trigger: 'hover',
+	    animated: 'fade',
+	    placement: 'bottom',
+	    html: true,
+	    boundary: 'window'
+	});
+	$(".card-title").on('click', function(){
+		$('.card-title').tooltip('hide');
+	});
+
+	$("#switch-to-image-view").on('click', function(){
+		$(".image-view").show();
+		$(".table-view").hide();
+		$("#switch-to-table-view").attr("disabled", false);
+		$("#switch-to-image-view").attr("disabled", true);
+	});
+	$("#switch-to-table-view").on('click', function(){
+		$(".image-view").hide();
+		$(".table-view").show();
+		$("#switch-to-table-view").attr("disabled", true);
+		$("#switch-to-image-view").attr("disabled", false);
+	});
+
+});
+</script>

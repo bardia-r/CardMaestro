@@ -1,0 +1,102 @@
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "schema_sha1"]]
+  [1m[35m (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT pg_try_advisory_lock(8364709660374481260)[0m
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to AddUserAttributes (20191102152947)
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (10.1ms)[0m  [1m[35mALTER TABLE "users" ADD "fname" character varying[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "users" ADD "lname" character varying[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "users" ADD "username" character varying[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191102152947"]]
+  [1m[35m (0.4ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateCards (20191103235941)
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (28.8ms)[0m  [1m[35mCREATE TABLE "cards" ("id" bigserial primary key, "title" character varying, "text" text, "collection" character varying, "set" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191103235941"]]
+  [1m[35m (0.4ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateCardOwnerships (20191104155945)
+  [1m[35m (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (7.6ms)[0m  [1m[35mCREATE TABLE "card_ownerships" ("id" bigserial primary key, "count" integer, "user_id" bigint NOT NULL, "card_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_acc73d39a1"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_e7dc79fe46"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE  INDEX  "index_card_ownerships_on_user_id" ON "card_ownerships"  ("user_id")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE  INDEX  "index_card_ownerships_on_card_id" ON "card_ownerships"  ("card_id")[0m
+  [1m[36mprimary::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191104155945"]]
+  [1m[35m (0.3ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateCollections (20191110024836)
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (6.0ms)[0m  [1m[35mCREATE TABLE "collections" ("id" bigserial primary key, "title" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191110024836"]]
+  [1m[35m (0.3ms)[0m  [1m[35mCOMMIT[0m
+Migrating to CreateCardConditions (20191113173435)
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (4.8ms)[0m  [1m[35mCREATE TABLE "card_conditions" ("id" bigserial primary key, "card_ownership_id" bigint NOT NULL, "near_mint" integer, "moderately_played" integer, "damaged" integer, "signed" integer, "premium" integer, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, CONSTRAINT "fk_rails_1883a48e46"
+FOREIGN KEY ("card_ownership_id")
+  REFERENCES "card_ownerships" ("id")
+)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE  INDEX  "index_card_conditions_on_card_ownership_id" ON "card_conditions"  ("card_ownership_id")[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191113173435"]]
+  [1m[35m (0.4ms)[0m  [1m[35mCOMMIT[0m
+Migrating to AddPrivateToCardOwnerships (20191117221912)
+  [1m[35m (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "card_ownerships" ADD "private" boolean[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191117221912"]]
+  [1m[35m (3.4ms)[0m  [1m[35mCOMMIT[0m
+Migrating to AddImageurlToCards (20191117225839)
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mALTER TABLE "cards" ADD "imageurl" character varying[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191117225839"]]
+  [1m[35m (3.3ms)[0m  [1m[35mCOMMIT[0m
+Migrating to DropCollections (20191127041505)
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (3.0ms)[0m  [1m[35mDROP TABLE "collections"[0m
+  [1m[36mprimary::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20191127041505"]]
+  [1m[35m (1.0ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[34mSELECT pg_advisory_unlock(8364709660374481260)[0m
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata"."value" FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1[0m  [["key", "schema_sha1"]]
+  [1m[35m (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (1.6ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.9ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.4ms)[0m  [1m[35mALTER TABLE "schema_migrations" DISABLE TRIGGER ALL;ALTER TABLE "ar_internal_metadata" DISABLE TRIGGER ALL;ALTER TABLE "card_conditions" DISABLE TRIGGER ALL;ALTER TABLE "users" DISABLE TRIGGER ALL;ALTER TABLE "card_ownerships" DISABLE TRIGGER ALL;ALTER TABLE "cards" DISABLE TRIGGER ALL[0m
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.6ms)[0m  [1m[35mALTER TABLE "schema_migrations" DISABLE TRIGGER ALL;ALTER TABLE "ar_internal_metadata" DISABLE TRIGGER ALL;ALTER TABLE "card_conditions" DISABLE TRIGGER ALL;ALTER TABLE "users" DISABLE TRIGGER ALL;ALTER TABLE "card_ownerships" DISABLE TRIGGER ALL;ALTER TABLE "cards" DISABLE TRIGGER ALL[0m
+  [1m[35m (0.8ms)[0m  [1m[35mALTER TABLE "schema_migrations" DISABLE TRIGGER ALL;ALTER TABLE "ar_internal_metadata" DISABLE TRIGGER ALL;ALTER TABLE "card_conditions" DISABLE TRIGGER ALL;ALTER TABLE "users" DISABLE TRIGGER ALL;ALTER TABLE "card_ownerships" DISABLE TRIGGER ALL;ALTER TABLE "cards" DISABLE TRIGGER ALL[0m
+  [1m[35m (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.4ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.4ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mFixtures Load (2.8ms)[0m  [1m[31mDELETE FROM "cards";
+DELETE FROM "users";
+DELETE FROM "card_ownerships";
+DELETE FROM "card_conditions";
+INSERT INTO "cards" ("id", "title", "text", "collection", "set", "created_at", "updated_at", "imageurl") VALUES (980190962, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.697471', '2019-11-27 15:43:36.697471', DEFAULT), (298486374, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.697471', '2019-11-27 15:43:36.697471', DEFAULT);
+INSERT INTO "users" ("id", "email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "fname", "lname", "username") VALUES (980190962, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702078', '2019-11-27 15:43:36.702078', DEFAULT, DEFAULT, DEFAULT), (298486374, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702078', '2019-11-27 15:43:36.702078', DEFAULT, DEFAULT, DEFAULT);
+INSERT INTO "card_ownerships" ("id", "count", "user_id", "card_id", "created_at", "updated_at", "private") VALUES (980190962, 1, 980190962, 980190962, '2019-11-27 15:43:36.704138', '2019-11-27 15:43:36.704138', DEFAULT), (298486374, 1, 298486374, 298486374, '2019-11-27 15:43:36.704138', '2019-11-27 15:43:36.704138', DEFAULT);
+INSERT INTO "card_conditions" ("id", "card_ownership_id", "near_mint", "moderately_played", "damaged", "signed", "premium", "created_at", "updated_at") VALUES (980190962, 980190962, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706101', '2019-11-27 15:43:36.706101'), (298486374, 298486374, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706101', '2019-11-27 15:43:36.706101')[0m
+  [1m[36mFixtures Load (2.5ms)[0m  [1m[31mDELETE FROM "cards";
+DELETE FROM "users";
+DELETE FROM "card_ownerships";
+DELETE FROM "card_conditions";
+INSERT INTO "cards" ("id", "title", "text", "collection", "set", "created_at", "updated_at", "imageurl") VALUES (980190962, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.697927', '2019-11-27 15:43:36.697927', DEFAULT), (298486374, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.697927', '2019-11-27 15:43:36.697927', DEFAULT);
+INSERT INTO "users" ("id", "email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "fname", "lname", "username") VALUES (980190962, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702395', '2019-11-27 15:43:36.702395', DEFAULT, DEFAULT, DEFAULT), (298486374, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702395', '2019-11-27 15:43:36.702395', DEFAULT, DEFAULT, DEFAULT);
+INSERT INTO "card_ownerships" ("id", "count", "user_id", "card_id", "created_at", "updated_at", "private") VALUES (980190962, 1, 980190962, 980190962, '2019-11-27 15:43:36.704261', '2019-11-27 15:43:36.704261', DEFAULT), (298486374, 1, 298486374, 298486374, '2019-11-27 15:43:36.704261', '2019-11-27 15:43:36.704261', DEFAULT);
+INSERT INTO "card_conditions" ("id", "card_ownership_id", "near_mint", "moderately_played", "damaged", "signed", "premium", "created_at", "updated_at") VALUES (980190962, 980190962, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706491', '2019-11-27 15:43:36.706491'), (298486374, 298486374, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706491', '2019-11-27 15:43:36.706491')[0m
+  [1m[36mFixtures Load (2.8ms)[0m  [1m[31mDELETE FROM "cards";
+DELETE FROM "users";
+DELETE FROM "card_ownerships";
+DELETE FROM "card_conditions";
+INSERT INTO "cards" ("id", "title", "text", "collection", "set", "created_at", "updated_at", "imageurl") VALUES (980190962, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.698240', '2019-11-27 15:43:36.698240', DEFAULT), (298486374, 'MyString', 'MyText', 'MyString', 'MyString', '2019-11-27 15:43:36.698240', '2019-11-27 15:43:36.698240', DEFAULT);
+INSERT INTO "users" ("id", "email", "encrypted_password", "reset_password_token", "reset_password_sent_at", "remember_created_at", "created_at", "updated_at", "fname", "lname", "username") VALUES (980190962, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702472', '2019-11-27 15:43:36.702472', DEFAULT, DEFAULT, DEFAULT), (298486374, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, '2019-11-27 15:43:36.702472', '2019-11-27 15:43:36.702472', DEFAULT, DEFAULT, DEFAULT);
+INSERT INTO "card_ownerships" ("id", "count", "user_id", "card_id", "created_at", "updated_at", "private") VALUES (980190962, 1, 980190962, 980190962, '2019-11-27 15:43:36.704328', '2019-11-27 15:43:36.704328', DEFAULT), (298486374, 1, 298486374, 298486374, '2019-11-27 15:43:36.704328', '2019-11-27 15:43:36.704328', DEFAULT);
+INSERT INTO "card_conditions" ("id", "card_ownership_id", "near_mint", "moderately_played", "damaged", "signed", "premium", "created_at", "updated_at") VALUES (980190962, 980190962, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706428', '2019-11-27 15:43:36.706428'), (298486374, 298486374, 1, 1, 1, 1, 1, '2019-11-27 15:43:36.706428', '2019-11-27 15:43:36.706428')[0m
+  [1m[35m (0.5ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (1.6ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (1.6ms)[0m  [1m[31mROLLBACK[0m

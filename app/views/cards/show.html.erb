@@ -1,0 +1,91 @@
+<div class="container py-4">
+  <% if @card.approved or (current_user and current_user.admin)%>
+    <div class="row">
+      <div class="col-12 border rounded bg-white shadow p-4">
+
+        <h1><b class="border-top border-bottom border-dark"><%= @card.title.upcase %></b></h1>
+
+        <div class="row p-4">
+          <div class="col-lg-4 text-center">
+		  <% if @card.image.attached? %>
+		    <%= image_tag @card.image, :alt => @card.title, width: 244, height: 361, class: "rounded shadow-lg border" %>
+		  <% else %>
+		    <%= image_tag @card.imageurl, :alt => @card.title, width: 244, height: 361, class: "rounded shadow-lg border" %>
+	    <% end %>
+          </div>   
+          <div class="col-lg-8 my-3">
+            
+            <h4 class="">
+              <strong>Title:</strong> <%= @card.title %><br><br>
+              <strong>Collection:</strong> <%= @card.collection %><br><br>
+              <strong>Set:</strong> <%= @card.set %><br><br>
+              <strong>Text:</strong><br> <%= @card.text %><br><br>
+            </h4>
+            <% if current_user and current_user.admin %>
+              <%= link_to 'Edit', edit_card_path(@card), class:"btn btn-primary p-1 px-4" %>
+            <% end %>
+          </div> 		
+        </div>
+
+		<hr>
+        <div class="row p-4">
+          <div class="col-12 text-center">
+          <%if user_signed_in? %>
+            <%if !@card.approved and current_user.admin %>
+              <h5>Card awaiting approval</h5>
+              <%= link_to 'Approve card', card_approve_path(card_id:@card.id, id:@card.id), class:"btn btn-primary p-1" %>
+              <%= link_to 'Delete card', card_path(@card), method: :delete, data: { confirm: 'Are you sure?'}, class:"btn btn-primary p-1" %>
+            <%elsif !current_user.card_ownerships.find_by(card_id: @card.id)%>
+              <h5> Cards Owned: 0 </h5>
+              <%= link_to 'Add To Collection', new_card_ownership_path(card_id:@card.id), class:"btn btn-primary p-1" %>
+              
+            <%else%>
+              <h5>Cards Owned: <%=current_user.card_ownerships.find_by(card_id:@card.id).count%></h5>
+              <%= link_to 'Update Number Of Cards', edit_card_ownership_path(current_user.card_ownerships.find_by(card_id: @card.id)), class:"btn btn-primary p-1"%>
+            <%end%>
+          <%end%>
+        </div>
+      </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-12 border rounded bg-white shadow p-4 my-4">
+        <h2><b class="border-top border-bottom border-dark">List of Sellers</b></h2>
+
+      <%if @card.users.any?%>
+      
+        <!--<h2> Sellers List:</h2>-->
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Quantity</th>
+              <th>Contact Seller</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @card.users.each do |user| %>
+              <%if user.card_ownerships.find_by(card_id: @card.id).sell%>
+                <tr>
+                <td><%= link_to user.username, users_personalcards_username_path(user.username) %></td>
+                <td><%= user.card_ownerships.find_by(card_id: @card.id).count %></td>
+                <td><%= link_to '<i class="fa fa-envelope"></i>'.html_safe, messages_path + '?sendto=' + user.username%>
+                </tr>
+              <%end%>
+            <% end %>
+          </tbody>
+        </table>
+        </br></br>
+      <%else%>
+        <h5> We could not find a seller for this card</h5>
+      <%end%>
+
+      </div>
+    </div>
+  <%else%>
+    <h5> This card is currently awaiting approval. </h5>
+    <%= link_to 'Back to Library', cards_path %>
+  <%end%>
+</div>

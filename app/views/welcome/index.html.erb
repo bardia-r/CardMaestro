@@ -1,0 +1,59 @@
+
+<!-- Cover -->
+<div class="py-5 text-center parallax cover filter-dark" style="background-image: url('https://i.pinimg.com/originals/d1/7a/d8/d17ad80144ef56adbf58a17a686ea619.jpg');position:relative;background-position:center center;background-size:cover;min-height: 520px;" >
+	<div class="container d-flex flex-column p-4">
+	  <br><br><br>
+	  <div class="row my-auto">
+	    <div class="col-md-12 text-light">
+	      <h1 class="mb-3 display-4"><b>Welcome to CardMaestro</b></h1>
+	      <h5 class="mb-2 text-light"><b>Where you can show off your collections</b></h5>
+        <% if !current_user%>
+          <%= link_to 'Sign-Up', new_user_registration_path, class:"btn btn-primary" %>
+        <% end %>
+	    </div>
+	  </div>
+	</div>
+</div>
+
+<!------- FEATURES ------->
+<div class="py-4 text-center bg-dark text-primary border-top" >
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 class="text-light"><b>FEATURES.</b></h2>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-4 p-4"> <i class="d-block fa fa-book fa-3x mb-2 text-light"></i>
+          <h4> <b>Organize Your Cards</b> </h4>
+          <p>Start organizing your collections today by using our service.</p>
+        </div>
+        <div class="col-md-4 col-6 p-4"> <i class="d-block fa fa-eye fa-3x mb-2 text-light"></i>
+          <h4> <b>Show Off Your Collection</b> </h4>
+          <p>Make your collection public so others can view it.</p>
+        </div>
+        <div class="col-md-4 col-6 p-4"> <i class="d-block fa fa-money-bill fa-3x mb-2 text-light"></i>
+          <h4> <b>Trade Your Cards</b> </h4>
+          <p>Easy to communicate to potential sellers/buyers.</p>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!------- CALL TO ACTION --------->
+<div class="py-5 text-center bg-secondary text-light border-top">
+    <div class="container">
+      <div class="row">
+        <div class="mx-auto col-lg-5 col-md-7 col-10">
+          <% if !current_user%>
+            <h1>Ready to join?<br>It's completely FREE</h1>
+            <%= link_to 'Sign-Up', new_user_registration_path, class:"btn btn-primary" %>
+          <% else %>
+            <h1>Head to our library and start creating your collection</h1>
+            <%= link_to 'Card Library', cards_path, class:"btn btn-primary" %>          
+          <% end %>
+        </div>
+      </div>
+    </div>
+</div>
+

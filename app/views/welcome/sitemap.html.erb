@@ -1,0 +1,32 @@
+<div class="container">
+	<div class="row" style="margin: 40px 0px;">
+    	<div class="col-12 border rounded bg-white shadow p-4">
+    		<h2>Below is a list of sites you can visit on our website:</h2><br>
+    		<p><strong>Public</strong></p>
+    		<ol style="list-style-type: square;">
+    			<li><%= link_to 'Homepage', root_path %></li>
+				<li><%= link_to 'Card Library', cards_path %></li>
+			</ol>
+			<p><strong>Support</strong></p>
+			<ol style="list-style-type: square;">
+				<li><%= link_to 'Contact Us', welcome_help_path %></li>
+         	 	<li><%= link_to 'FAQs', welcome_faq_path %></li>
+          		<li><%= link_to 'Sitemap', welcome_sitemap_path %></li>
+			</ol>
+			<p><strong>Other</strong></p>
+			<ol style="list-style-type: square;">
+				<li><%= link_to 'About', welcome_about_path %></li>
+    			<li><%= link_to 'Terms of Service', welcome_tos_path %></li>
+    			<li><%= link_to 'Privacy Policy', welcome_privacy_policy_path %></li>
+			</ol>
+			<% if current_user %>
+				<p><strong>User</strong></p>
+				<ol style="list-style-type: square;">
+					<li><%= link_to 'Personal Profile', edit_user_registration_path %></li>
+					<li><%= link_to 'Personal Cards', users_personalcards_index_path %></li>
+					<li><%= link_to 'Messages', messages_path %></li>
+				</ol>
+			<% end %>
+    	</div>
+    </div>
+</div>

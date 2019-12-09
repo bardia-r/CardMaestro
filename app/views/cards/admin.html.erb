@@ -1,0 +1,64 @@
+<% if current_user and current_user.admin %>
+  <div class="container py-4">
+
+    <% if flash[:notice] %>
+      <h2><%= flash[:notice] %></h2>
+    <% end %>
+    <div class="row">
+      <div class="col-12 border rounded bg-white shadow p-4">
+        
+        <h1><b class="border-bottom border-top border-dark">CARD REQUESTS.</b></h1>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Collection</th>
+              <th>Set</th>
+              <th>Edit</th>
+              <th>Approve</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @cards.select{ |card| !card.approved }.each do |card| %>
+              <tr>
+                <% if card.image.attached? %>
+                  <td><a class="card-title" data-toggle="tooltip" title='<%=image_tag card.image, width:127, height:180%>' target="_blank" href=<%=card_path(card)%>><%= card.title %></a></td>
+                <% else %>
+                  <td><a class="card-title" data-toggle="tooltip" title='<%=image_tag card.imageurl, width:127, height:180%>' target="_blank" href=<%=card_path(card)%>><%= card.title %></a></td>
+                <% end %>
+                <td><%= card.text %></td>
+                <td><%= card.collection %></td>
+                <td><%= card.set %></td>
+                <td><%= link_to '<i class="fa fa-edit"></i>'.html_safe, edit_card_path(card) %></td>
+                <td><%= link_to '<i class="fa fa-check"></i>'.html_safe, card_approve_path(card_id:card.id, id:card.id) %></td>
+                <td><%= link_to '<i class="fa fa-trash"></i>'.html_safe, card_path(card), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+<% else %>
+  <% controller.redirect_to welcome_index_path %>
+<% end %>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip({
+	    trigger: 'hover',
+	    animated: 'fade',
+	    placement: 'bottom',
+	    html: true,
+	    boundary: 'window'
+	});
+	$(".card-title").on('click', function(){
+		$('.card-title').tooltip('hide');
+	});
+});
+</script>

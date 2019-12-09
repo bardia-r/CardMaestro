@@ -1,0 +1,303 @@
+<div class="container p-4">
+  <div class="row">
+    <div class="col-12 border rounded bg-white shadow p-4">
+
+      <!--<%= link_to 'New Message', new_message_path %>-->
+      <div class="container_custom">
+      <h1 class="text-center mb-3"><span class="border-bottom border-top border-dark">MY MESSAGES.</span></h1>
+      <div class="alert alert-warning" role="alert">
+        <i class="fa fa-times-circle"></i> Please ONLY use <b>PayPal</b> as payment method for trading. Otherwise, we cannot support you if something goes wrong!<br>
+      </div>
+
+      <!--  Design by Sunil Rajput  -->
+      <div class="messaging">
+            <div class="inbox_msg">
+              <div class="inbox_people">
+                <div class="headind_srch">
+                  <div class="recent_heading">
+                    <h4>Recent</h4>
+                  </div>
+                  <!--
+                  <div class="srch_bar">
+                    <div class="stylish-input-group">
+                      <input type="text" class="search-bar"  placeholder="Search" >
+                      <span class="input-group-addon">
+                      <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                      </span> </div>
+                  </div>
+                  -->
+                </div>
+                <div class="inbox_chat">
+
+                  <% if @contacts %>
+                    <% @contacts.each do |key, value| %>
+
+                      <% if value.sender == current_user.id or value.seen %>
+                        <div class="chat_list">
+                      <% else %>
+                        <div class="chat_list bg-warning">
+                      <% end %>
+                        <div class="chat_people">
+                          <div class="chat_ib">
+                            <h5><span class="username"><%= key %></span> <span class="chat_date chat_ib_span"><%= value.sent_at.strftime("%T | %b %d")%></span></h5>
+                            <p class="msg"><%= value.contents %></p>
+                            <input type="hidden" class="id" value="<%= value.id %>">
+                          </div>
+                        </div>
+                      </div>
+
+                    <% end %>
+                  <% end %>
+                  <!-- Chat History -->
+                  <!--
+                  <div class="chat_list active_chat">
+                    <div class="chat_people">
+                      <div class="chat_ib">
+                        <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                        <p>Test, which is a new approach to have all solutions 
+                          astrology under one roof.</p>
+                      </div>
+                    </div>
+                  </div>
+                  -->
+                </div>
+              </div>
+              <div class="mesgs">
+                <div class="msg_history">
+
+                  <!--
+                  <% def load_msgs %>
+                  <% @messages.each do |message| %>
+                    <% if message.sender==current_user.id %>
+
+                      <div class="outgoing_msg">
+                        <div class="sent_msg">
+                          <p><%= message.contents %></p>
+                          <span class="time_date"><%= message.sent_at.strftime("%T     |     %b %d") %></span> </div>
+                      </div>
+
+                    <% elsif %>
+
+                      <div class="incoming_msg">
+                        <div class="received_msg">
+                          <div class="received_withd_msg">
+                          <p><%= message.contents %></p>
+                          <span class="time_date"><%= message.sent_at.strftime("%T     |     %b %d") %></span> </div>
+                        </div>
+                      </div>
+
+                    <% end %>
+                    <% end %>
+                  <% end %>
+                  -->
+                  <!--
+                  <div class="incoming_msg">
+                    <div class="incoming_msg_img"> <img class="img_custom" src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                    <div class="received_msg">
+                      <div class="received_withd_msg">
+                        <p>Test which is a new approach to have all
+                          solutions</p>
+                        <span class="time_date"> 11:01 AM    |    June 9</span></div>
+                    </div>
+                  </div>
+
+                  <div class="outgoing_msg">
+                    <div class="sent_msg">
+                      <p>Test which is a new approach to have all
+                        solutions</p>
+                      <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+                  </div>
+                -->
+                </div>
+                <div class="type_msg">
+                  <div class="input_msg_write">
+                    <input type="text" class="write_msg" placeholder="Type a message" />
+                    <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+  /* Update the chat every 5 seconds */
+  setInterval(function(){ get_new_contacts(); }, 3000);
+
+  function get_new_contacts(){
+    $.ajax({
+      url: '/messages/new-contacts',
+      async: true,
+      method: "POST",
+      //data: data,
+      success: function(results) {
+        var res = JSON.parse(results);
+        console.log(results);
+        //load_msgs(res);
+        update_the_contacts(res);
+      }
+    });
+  }
+
+  function update_the_contacts(res){
+
+    $(".chat_list").each(function(i, obj) {
+      var username = $(this).find(".username").html();
+      if( res[username] && $(this).find(".id").val()!=res[username].id ){
+        
+        if( res[username].receiver == <%= current_user.id %> ){
+          $(this).addClass("bg-warning");
+        }
+
+        $(this).find(".id").val(res[username].id);
+        $(this).find(".msg").html(res[username].contents);
+        //$(this).find(".chat_date").html(res[username].sent_at);
+
+        if($(this).hasClass("active_chat")){
+          load_msgs_from_db(username);
+        }
+      }
+    });
+
+  }
+
+
+  function open_chat(username){
+    var found = 0;
+    $(".chat_list").each(function(i, obj) {
+      if( $(this).find(".username").html()==username ){
+        $(".chat_list").removeClass('active_chat');
+        $(this).addClass('active_chat');      
+        found = 1;
+        load_msgs_from_db(username);
+      }
+    });
+
+    if(found==0){
+      //Create a new contact 
+      $(".chat_list").removeClass('active_chat');
+      var elm = '<div class="chat_list active_chat new-session">'+
+                  '<div class="chat_people">'+
+                    '<div class="chat_ib">'+
+                      '<h5><span class="username">'+username+'</span> <span class="chat_date chat_ib_span"></span></h5>'+
+                      '<p></p>'+
+                    '</div>'+
+                  '</div>'+
+                '</div>';
+      $(elm).prependTo(".inbox_chat");
+
+
+      $(".new-session").on('click', function(){
+        $(".chat_list").removeClass('active_chat');
+        $(this).addClass('active_chat');
+        $(this).removeClass("bg-warning");
+        $(".msg_history").html('');
+        //var username = $(this).find(".username").html();
+        //load_msgs_from_db(username);
+      });
+
+    }
+  }
+
+  function load_msgs(message){
+
+    $(".msg_history").html('');
+
+    for(var i = 0; i < message.length; i++) {
+      var m = message[i];
+      var elm;
+      if(m.sent==1){
+        elm = '<div class="outgoing_msg">'+
+              '<div class="sent_msg">'+
+                '<p>'+m.content+'</p>'+
+                '<span class="time_date">'+m.time+'</span> </div>'+
+            '</div>';
+      } else {
+        elm = '<div class="incoming_msg">'+
+              '<div class="received_msg">'+
+                '<div class="received_withd_msg">'+
+                '<p>'+m.content+'</p>'+
+                '<span class="time_date">'+m.time+'</span> </div>'+
+              '</div>'+
+            '</div> ';
+      }
+      $(elm).appendTo(".msg_history");
+    }
+  }
+
+  function load_msgs_from_db(username){
+      /* Send the message with an AJAX call */
+      $.ajax({
+        url: '/messages/chat?username='+username,
+        async: false,
+        method: "POST",
+        //data: data,
+        success: function(results) {
+          var res = JSON.parse(results);
+          console.log(results);
+          load_msgs(res);
+        }
+      });
+  }
+  
+  function send_message() {
+    var data = {
+        receiver: $('.active_chat').find(".username").html(),
+        msg: $(".write_msg").val() 
+    };
+    if (data.msg) {
+        /* Send the message with an AJAX call */
+        $.ajax({
+          url: '<%= messages_path %>',
+          async: false,
+          method: "POST",
+          data: data,
+          success: function(results) {
+            var res = JSON.parse(results);
+            $(".write_msg").val('');
+            load_msgs(res);
+          }
+        });
+        $(".msg_history").scrollTop($(".msg_history")[0].scrollHeight);
+    }
+  }
+
+  $(".msg_send_btn").on('click', function(){
+      send_message();
+  });
+
+  $(".chat_list").on('click', function(){
+
+      $(".chat_list").removeClass('active_chat');
+      $(this).addClass('active_chat');
+      $(this).removeClass("bg-warning");
+
+      var username = $(this).find(".username").html();
+
+      load_msgs_from_db(username);
+      $(".msg_history").scrollTop($(".msg_history")[0].scrollHeight);
+  });
+  
+  $(document).keypress(function(e) {
+    if (e.keyCode === 13) { // Enter key pressed
+      send_message();
+    }
+  });
+
+  /* Check for URL parameters */
+  <% if User.find_by(username: params['sendto']) %>
+    var sendto = "<%=params['sendto']%>";
+    open_chat(sendto);
+  <% else %>
+    var sendto = null;
+  <%end%>
+
+
+});
+</script>
+

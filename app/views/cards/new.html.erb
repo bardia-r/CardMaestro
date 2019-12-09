@@ -1,0 +1,50 @@
+
+<div class="container">
+
+  <div class="row my-4">
+    <div class="col-6 mx-auto p-4 bg-light rounded shadow">
+
+      <%= form_with scope: :card, url: cards_path, local: true do |form| %>
+
+        <h2 class="text-center"><b>Upload a New Card</b></h2>
+
+        <!-- Display errors if any -->
+        <% if @card.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <% @card.errors.full_messages.each do |message| %>
+              <i class="fa fa-times-circle"></i> <%= message %><br>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="field">
+          <%= form.text_field :title, class:"form-control my-2", placeholder:"Card Title" %>
+        </div>
+
+        <div class="field">
+          <%= form.text_area :text, class:"form-control my-2", placeholder:"Description" %>
+        </div>
+
+        <div class="field">
+          <%= form.text_field :collection, class:"form-control my-2", placeholder:"Collection" %>
+        </div>
+        
+        <div class="field">
+          <%= form.text_field :set, class:"form-control my-2", placeholder:"Set" %>
+        </div>
+		
+        <div class="field">
+          <%= form.file_field :image, class:"form-control my-2", placeholder:"Image" %>
+        </div>
+       
+        <div class="field">
+          <%= form.submit "Create Card", class:"btn btn-primary w-100 my-3" %>
+        </div>
+
+      <% end %>
+
+      <%= link_to 'Back', :back %>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<%= stylesheet_link_tag "user_profile" %>
+
+<!-- Display errors if any -->
+<% if @user.errors.any? %>
+  <div class="alert alert-danger" role="alert">
+    <% @user.errors.full_messages.each do |message| %>
+      <i class="fa fa-times-circle"></i> <%= message %><br>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="container">
+  <div class="row" style="margin: 40px 0px;">
+    <div class="col-12 border rounded bg-white shadow p-4">
+      <div class="user-profile">
+        <div class="profile-section">
+          <h2>Edit Profile</h2>
+
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+
+            <!--<%= render "devise/shared/error_messages", resource: resource %>-->
+
+            <div class="field" id="name">
+              <%= f.label "First Name" %><br />
+              <%= f.text_field :fname, autofocus: true, autocomplete: "firstname" %>
+            </div>
+
+            <div class="field" id="name">
+              <%= f.label "Last Name" %><br />
+              <%= f.text_field :lname, autofocus: true, autocomplete: "lastname" %>
+            </div>
+
+            <div class="field">
+              <%= f.label :username %><br />
+              <%= f.text_field :username, autofocus: true, autocomplete: "username" %>
+            </div>
+
+            <div class="field">
+              <%= f.label :email %><br />
+              <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+            </div>
+
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+            <% end %>
+
+            <div class="field">
+              <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+              <%= f.password_field :password, autocomplete: "new-password" %>
+              <% if @minimum_password_length %>
+                <br />
+                <em><%= @minimum_password_length %> characters minimum</em>
+              <% end %>
+            </div>
+
+            <div class="field">
+              <%= f.label :password_confirmation %><br />
+              <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+            </div>
+
+            <div class="field">
+              <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+              <%= f.password_field :current_password, autocomplete: "current-password" %>
+            </div>
+
+            <div class="actions">
+              <%= f.submit "Save", :class => 'submit-btn' %>
+            </div>
+          <% end %>
+        </div>
+        <div class="profile-section">
+          <h2>Deactivate Account</h2>
+
+          <p >Unhappy with your account? Cancel any time. <%= button_to "Deactivate", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, :class => 'submit-btn' %></p>
+        </div>
+
+        <div class="back-btn">
+          <%= link_to "Back", root_path %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

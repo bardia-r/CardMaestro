@@ -1,0 +1,33 @@
+<div class="container">
+	<div class="row" style="margin: 40px 0px;">
+    	<div class="col-12 border rounded bg-white shadow p-4">
+			<%= stylesheet_link_tag "user_profile" %>
+
+			<div class="user-profile">
+				<h1 style="margin-bottom: 30px;">
+					<b class="border-bottom border-top border-dark"><%= @user.username.upcase %>'s PUBLIC COLLECTION.</b>
+				</h1>
+				<div class="personal-collections">
+					<% @personalcards.each do |card| %>
+						<div class="mycard-container">
+							<% if card.image.attached? %>
+								<%= image_tag card.image, :alt => card.title, width: 244, height: 361, class: "card_pic" %>
+							<% else %>
+								<%= image_tag card.imageurl, :alt => card.title, width: 244, height: 361, class: "card_pic" %>
+							<% end %>
+							<div class="card-body text-center">
+								<p><strong><%= card.title %></strong><br><%= card.set %><br></p>
+								<div class="customized-btn-group">
+			                      <%= link_to 'View Card', card_path(card), class:"btn btn-primary", id:"view-btn" %>
+			                    </div>
+							</div>
+						</div>
+					<% end %>
+				</div>
+				<div class="back-btn">
+			    	<%= link_to "Back", request.referer.present? ? request.referer : root_path %>
+			  	</div>
+			</div>
+		</div>
+	</div>
+</div>
